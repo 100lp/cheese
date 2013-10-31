@@ -1,0 +1,88 @@
+-# - provide(:title, 'Home')
+- if flash[:notice]
+  = flash[:notice]
+
+%h2
+  Общая статистика
+%table
+  - @users.each do |user|
+    %tr
+      %td
+        #{user.name}
+      %td{style: "text-align: center; color: red;"}
+        #{user.results.map(&:result)}
+      %td
+        = link_to 'delete', "/destroy?delete_user=#{user.id}", :method => :delete
+
+%h2
+  Последняя игра
+%table
+  %tr
+    %th Имя
+    %th Результат
+    %th Игра
+    %th Дата создания
+  - @users.each do |user|
+    %tr
+      %td
+        #{user.name}
+      %td{style: "text-align: center; color: red;"}
+        - view_result = user.results.map(&:result)
+        #{view_result.last}
+      %td
+        - view_game = user.results.map(&:game)
+        #{view_game.last}
+      %td
+        - view_date = user.results.map(&:created_at)
+        #{view_date.last}
+
+%br
+%h3 Добавить результат
+.result_add
+  = form_tag("/add_result") do
+    = label_tag("Имя:")
+    %select{name: "option_name"}
+      - @users.each do |user|
+        %option
+          #{user.name}
+    %br
+    = label_tag("Результат:")
+    %select{name: "option_result"}
+      - 0.upto(6) do |i|
+        %option
+          #{i}
+
+    %br
+    = label_tag("Игра:")
+    %select{name: "option_game"}
+      - @games.each do |game|
+        %option
+          #{game.name}
+
+    %br
+    %br
+    = submit_tag("Отправить")
+
+%br
+%h3 Добавить пользователя
+.user_add
+  = form_tag("/add_user") do
+    = label_tag("Имя:")
+    = text_field_tag(:name)
+    -# %br
+    -# = label_tag("Результат:")
+    -# = text_field_tag(:result)
+    %br
+    %br
+    = submit_tag("Отправить")
+
+%br
+%h3 Добавить игру
+.user_add
+  = form_tag("/add_game") do
+    = label_tag("Название игры:")
+    = text_field_tag(:game_name)
+    %br
+    %br
+    = submit_tag("Отправить")
+
